@@ -5,7 +5,14 @@ import { IUserRepository } from "./user-repository.interface";
 
 @Service()
 export class InMemoryUserRepository implements IUserRepository {
-  private users: User[] = [];
+  private users: User[] = [
+    {
+      id: '1',
+      name: 'dayatz',
+      email: 'dayatz.dev@gmail.com',
+      hashedPassword: '$2b$10$wP9xkgaTFBArp8YNWMEWfueMuzxsld6lk0fvtmehKlys224ib.Irq'
+    }
+  ];
 
   async save(user: User): Promise<User> {
     const newUser = {

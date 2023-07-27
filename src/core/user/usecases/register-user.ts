@@ -18,6 +18,7 @@ export default class RegisterUserUsecase {
     const hashedPassword = this.passwordService.hash(user.password);
     const u = new User(user.name, user.email, hashedPassword);
     const createdUser = await this.userRepository.save(u); // now the user has id
+    console.log(createdUser)
     return {
       id: createdUser.id!, // user entity will always have id once it's saved
       name: createdUser.name,
