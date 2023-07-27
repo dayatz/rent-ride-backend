@@ -2,7 +2,10 @@ import jwt from "jsonwebtoken";
 import { LoginResultDTO } from "../dto/login-dto";
 import { IJwtService } from "./jwt-service.interface";
 import { ReadUserDTO } from "../../user/dto/user-dto";
-import { Service } from "typedi";
+import { Inject, Service } from "typedi";
+import { DecodedJWT } from "./types";
+import { InMemoryUserRepository } from "core/user/repositories/user-repository.imp";
+import { IUserRepository } from "core/user/repositories/user-repository.interface";
 
 // TODO: need to generate the secret keys
 const ACCESS_TOKEN_SECRET = "access-token-secret";
@@ -10,11 +13,15 @@ const REFRESH_TOKEN_SECRET = "refresh-token-secret";
 
 @Service()
 export class JwtService implements IJwtService {
+  constructor(
+    @Inject(() => InMemoryUserRepository) private userRepo: IUserRepository
+  ) {}
+
   generateToken(user: ReadUserDTO): LoginResultDTO {
-    const accessToken = jwt.sign({ id: user.id }, ACCESS_TOKEN_SECRET, {
-      expiresIn: "10m",
+    const accessToken = jwt.sign({ email: user.email }, ACCESS_TOKEN_SECRET, {
+      expiresIn: "1m",
     });
-    const refreshToken = jwt.sign({ id: user.id }, REFRESH_TOKEN_SECRET, {
+    const refreshToken = jwt.sign({ email: user.email }, REFRESH_TOKEN_SECRET, {
       expiresIn: "7d",
     });
     return {
@@ -24,19 +31,17 @@ export class JwtService implements IJwtService {
     };
   }
 
-  verifyAccessToken(accessToken: string): LoginResultDTO | null {
+  verifyAccessToken(accessToken: string): DecodedJWT | null {
     try {
-      const userId = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
-      return userId as LoginResultDTO;
+      return jwt.verify(accessToken, ACCESS_TOKEN_SECRET) as DecodedJWT;
     } catch (e) {
       return null;
     }
   }
 
-  verifyRefreshToken(refreshToken: string): LoginResultDTO | null {
+  verifyRefreshToken(refreshToken: string): DecodedJWT | null {
     try {
-      const result = jwt.verify(refreshToken, REFRESH_TOKEN_SECRET);
-      return result as LoginResultDTO;
+      return jwt.verify(refreshToken, REFRESH_TOKEN_SECRET) as DecodedJWT ;
     } catch (e) {
       return null;
     }

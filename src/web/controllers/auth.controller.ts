@@ -2,13 +2,16 @@ import type { Request, Response, Router } from 'express'
 import { LoginUsecase } from "core/auth/usecases/login";
 import Container, { Inject, Service } from "typedi";
 import { LoginDTO, LoginResultDTO } from 'core/auth/dto/login-dto';
+import { RefreshTokenUsecase } from 'core/auth/usecases/refresh-token';
 
 @Service()
 export class AuthController {
   constructor(
-    @Inject(() => LoginUsecase) private loginUsecase: LoginUsecase
+    @Inject(() => LoginUsecase) private loginUsecase: LoginUsecase,
+    @Inject(() => RefreshTokenUsecase) private refreshTokenUsecase: RefreshTokenUsecase
   ) {
     this.login = this.login.bind(this)
+    this.refreshToken = this.refreshToken.bind(this)
   }
 
   async login(req: Request<{}, {}, LoginDTO>, res: Response) {
@@ -22,11 +25,18 @@ export class AuthController {
       })
     }
   }
+
+  async refreshToken(req: Request<{}, {}, {refreshToken: string}>, res: Response) {
+    const { refreshToken } = req.body
+    const result = await this.refreshTokenUsecase.execute(refreshToken)
+    res.json(result)
+  }
 }
 
 export default function mountToRoutes(router: Router) {
   const userController = Container.get(AuthController)
   router.post("/login", userController.login)
+  router.post("/refresh-token", userController.refreshToken)
 
   return router;
 }
