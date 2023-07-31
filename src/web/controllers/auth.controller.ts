@@ -1,7 +1,8 @@
 import type { Request, Response, Router } from 'express'
-import { LoginUsecase } from "core/auth/usecases/login";
 import Container, { Inject, Service } from "typedi";
-import { LoginDTO, LoginResultDTO } from 'core/auth/dto/login-dto';
+
+import { LoginUsecase } from "core/auth/usecases/login";
+import { LoginDTO } from 'core/auth/dto/login-dto';
 import { RefreshTokenUsecase } from 'core/auth/usecases/refresh-token';
 
 @Service()
