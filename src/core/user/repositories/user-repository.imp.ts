@@ -2,17 +2,11 @@ import { Service } from "typedi";
 // import { nanoid } from "nanoid";
 import { User } from "../entities/user.entity";
 import { IUserRepository } from "./user-repository.interface";
+import MOCK_USERS from "./mock-users";
 
 @Service()
 export class InMemoryUserRepository implements IUserRepository {
-  private users: User[] = [
-    {
-      id: '1',
-      name: 'dayatz',
-      email: 'dayatz.dev@gmail.com',
-      hashedPassword: '$2b$10$wP9xkgaTFBArp8YNWMEWfueMuzxsld6lk0fvtmehKlys224ib.Irq'
-    }
-  ];
+  private users: User[] = MOCK_USERS;
 
   async save(user: User): Promise<User> {
     const newUser = {

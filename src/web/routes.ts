@@ -7,7 +7,7 @@ import carRoutes from "./controllers/car.controller";
 import { loginRequired } from "./middlewares/auth.middleware";
 
 const router = express.Router();
-router.use("/cars", carRoutes());
+router.use("/cars", loginRequired, carRoutes());
 router.use("/users", userRoutes());
 router.use("/auth", authRoutes());
 

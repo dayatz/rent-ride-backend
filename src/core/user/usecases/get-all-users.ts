@@ -14,7 +14,6 @@ export default class GetAllUserUsecase {
 
   async execute(): Promise<ReadUserDTO[]> {
     const usersDb = await this.userRepository.getAll()
-    console.log(usersDb)
     return usersDb.map(user => ({
       id: user.id!,
       name: user.name,

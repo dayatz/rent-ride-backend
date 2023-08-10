@@ -13,7 +13,6 @@ export class RefreshTokenUsecase {
 
   async execute(refreshToken: string) {
     const decodedPayload = this.jwtService.verifyRefreshToken(refreshToken);
-    console.log(decodedPayload)
     if (!decodedPayload) throw new Error("Invalid refresh token.");
 
     const { email } = decodedPayload;

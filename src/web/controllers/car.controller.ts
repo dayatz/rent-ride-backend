@@ -3,6 +3,11 @@ import { CreateCarUsecase } from "core/car/usecases/create-car";
 import Container, { Inject, Service } from "typedi";
 import { GetAllCarsUsecase } from "core/car/usecases/get-all-cars";
 import { CreateCarDTO } from "core/car/dto/car.dto";
+import { FormattedError } from "core/types";
+
+function isCustomError(error: unknown): error is FormattedError {
+  return typeof error === 'object' && error !== null && 'type' in error;
+}
 
 @Service()
 export class CarController {
@@ -20,8 +25,16 @@ export class CarController {
   }
 
   async post(req: Request<{}, {}, CreateCarDTO>, res: Response) {
-    const createdCar = await this.createCarUsecase.execute(req.body)
-    res.json(createdCar)
+    try {
+      const createdCar = await this.createCarUsecase.execute(req.body)
+      return res.json(createdCar)
+    } catch(e) {
+      console.log('errr', e)
+      if (isCustomError(e)) {
+        return res.status(400).json(e)
+      }
+      return res.status(400).json({"message": "invalid request"})
+    }
   }
 }
 

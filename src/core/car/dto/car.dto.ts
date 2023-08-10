@@ -2,7 +2,7 @@ export interface CarBase {
   make: string
   model: string
   year: number
-  isAvailale: boolean
+  isAvailale?: boolean
 }
 
 export interface CreateCarDTO extends CarBase {}
